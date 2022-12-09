@@ -30,8 +30,11 @@ export default function handler(
     posts = posts.filter((post) => post.categories.includes(Number(category)));
   }
 
+  // @ts-ignore
   const indexOfLastPost = page * limit;
+  // @ts-ignore
   const indexOfFirstPost = indexOfLastPost - limit;
+  // @ts-ignore
   const pageCount = Math.ceil(posts.length / limit);
   const _posts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
@@ -41,10 +44,12 @@ export default function handler(
       listOfCategories.push(...categories.filter(category => category.id === categoryId))
     })
 
+    // @ts-ignore
     element.categoriesList = listOfCategories;
   })
 
   res.status(200).json({
+    // @ts-ignore
     posts: _posts,
     pageCount: pageCount,
   });

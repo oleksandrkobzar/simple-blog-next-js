@@ -1,6 +1,8 @@
-const apiUrl = "http://localhost:3000/api";
+import { DEFAULT_LIMIT_POSTS } from "./constants";
 
-export const getPostsApi = async (page = 1, limit = 6, search = "", category = null) => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api";
+
+export const getPostsApi = async (page = 1, limit = DEFAULT_LIMIT_POSTS, search: string = "", category: string = "") => {
   let url = `${apiUrl}/posts?page=${page}&limit=${limit}`
 
   if (category) url += `&category=${category}`;
