@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { debounce } from "lodash";
 
 import { Category, Post } from "../interfaces";
 import { getCategoriesApi, getPostsApi } from "../shared/api";
 import { DEFAULT_LIMIT_POSTS } from "../shared/constants";
 
 import PostTile from "../components/PostTile";
-import Search from "../components/Search";
 
 interface BlogProps {
   posts: Array<Post>;
@@ -37,8 +37,11 @@ export default function Blog(props: BlogProps) {
   const router = useRouter();
 
   useEffect(() => {
-    setPosts(props.posts);
-    setSelectedCategory(props.category);
+    if (router.query.category) {
+      setPosts(props.posts);
+      setSelectedCategory(props.category);
+      setSearch(router.query.search && String(router.query.search) || "");
+    }
   }, [router.query.category]);
 
   const getPosts = async (page: number = 1, limit: number = DEFAULT_LIMIT_POSTS, search: string, category: string) => {
@@ -52,23 +55,32 @@ export default function Blog(props: BlogProps) {
 
   const handleSelectCategory = async (idCategory: string) => {
     setSelectedCategory(idCategory);
-    setSearch("");
     setPage(1);
 
-    await getPosts(1, DEFAULT_LIMIT_POSTS, "", idCategory);
+    await getPosts(1, DEFAULT_LIMIT_POSTS, search, idCategory);
   };
 
-  const handleSearch = async (_searchText: string) => {
+  const handleSearch = async (_searchText: string, _selectedCategory: string) => {
     setSearch(_searchText);
     setPage(1);
 
-    await getPosts(1, DEFAULT_LIMIT_POSTS, _searchText, selectedCategory);
+    await getPosts(1, DEFAULT_LIMIT_POSTS, _searchText, _selectedCategory);
   };
 
   const handlePage = async (_page: number) => {
     setPage(_page);
 
     await getPosts(_page, DEFAULT_LIMIT_POSTS, search, selectedCategory);
+  };
+
+  const debouncedSearch = useRef(
+    debounce(async (_search: string, _selectedCategory: string) => {
+      await handleSearch(_search, _selectedCategory);
+    }, 300)
+  ).current;
+
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    debouncedSearch(e.target.value, selectedCategory);
   };
 
   return (
@@ -87,7 +99,13 @@ export default function Blog(props: BlogProps) {
             labore natus atque, ducimus sed.
           </p>
           <div className="flex justify-between flex-col sm:flex-row gap-4 my-4">
-            <Search search={search} setSearch={(v) => handleSearch(v)} />
+            <input
+              defaultValue={search}
+              type="text"
+              onChange={handleChange}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-500"
+              placeholder="Search"
+            />
             <select
               name="categories"
               value={selectedCategory}
