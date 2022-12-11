@@ -30,12 +30,9 @@ export default function handler(
     posts = posts.filter((post) => post.categories.includes(Number(category)));
   }
 
-  // @ts-ignore
-  const indexOfLastPost = page * limit;
-  // @ts-ignore
-  const indexOfFirstPost = indexOfLastPost - limit;
-  // @ts-ignore
-  const pageCount = Math.ceil(posts.length / limit);
+  const indexOfLastPost = Number(page) * Number(limit);
+  const indexOfFirstPost = indexOfLastPost - Number(limit);
+  const pageCount = Math.ceil(posts.length / Number(limit));
   const _posts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   _posts.forEach(element => {
@@ -49,7 +46,6 @@ export default function handler(
   })
 
   res.status(200).json({
-    // @ts-ignore
     posts: _posts,
     pageCount: pageCount,
   });

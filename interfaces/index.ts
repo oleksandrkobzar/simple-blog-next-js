@@ -5,7 +5,7 @@ export interface Post {
   excerpt: string;
   imageUrl: string;
   categories: Array<number>;
-  categoriesList: Array<Category>;
+  categoriesList?: Array<Category>;
 }
 
 export interface Category {

@@ -1,10 +1,9 @@
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
 import { Category, Post } from "../interfaces";
-import Link from "next/link";
-
 import PlaceholderImage from "../assets/images/placeholder.jpg"
-import { useEffect, useState } from "react";
 
 interface PostTileProps {
   post: Post;
@@ -18,7 +17,7 @@ export default function PostTile({post}: PostTileProps) {
   }, [post.imageUrl])
 
   return (
-    <div className="flex flex-col rounded-lg overflow-hidden shadow-lg shadow-gray-200">
+    <div className="flex flex-col rounded-lg overflow-hidden shadow-lg shadow-gray-200 transition-transform hover:-translate-y-1 ease-in-out">
       <div className="relative pb-[56.25%]">
         <Image
           src={isImageError ? PlaceholderImage : post.imageUrl}

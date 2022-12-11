@@ -1,6 +1,6 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
 import Head from "next/head";
-import { debounce } from "lodash"
 
 import { Category, Post } from "../interfaces";
 import { getCategoriesApi, getPostsApi } from "../shared/api";
@@ -32,20 +32,22 @@ export default function Blog(props: BlogProps) {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(props.pageCount);
   const [selectedCategory, setSelectedCategory] = useState(props.category)
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setPosts(props.posts);
-  }, [props.posts]);
-
-  useEffect(() => {
     setSelectedCategory(props.category);
-  }, [props.category]);
+  }, [router.query.category]);
 
   const getPosts = async (page: number = 1, limit: number = DEFAULT_LIMIT_POSTS, search: string, category: string) => {
+    setIsLoading(true);
     const {posts, pageCount} = await getPostsApi(page, limit, search, category);
 
     setPosts(posts);
-    setPageCount(pageCount)
+    setPageCount(pageCount);
+    setIsLoading(false);
   };
 
   const handleSelectCategory = async (idCategory: string) => {
@@ -56,11 +58,11 @@ export default function Blog(props: BlogProps) {
     await getPosts(1, DEFAULT_LIMIT_POSTS, "", idCategory);
   }
 
-  const handleSearch = async (value: string) => {
-    setSearch(value)
+  const handleSearch = async (_searchText: string) => {
+    setSearch(_searchText);
     setPage(1)
 
-    await getPosts(1, DEFAULT_LIMIT_POSTS, value, selectedCategory);
+    await getPosts(1, DEFAULT_LIMIT_POSTS, _searchText, selectedCategory);
   }
 
   const handlePage = async (_page: number) => {
@@ -112,13 +114,13 @@ export default function Blog(props: BlogProps) {
             <button
               className="bg-indigo-500 hover:bg-indigo-600 py-4 px-8 rounded-lg overflow-hidden text-white disabled:bg-indigo-300"
               onClick={() => handlePage(page - 1)}
-              disabled={page === 1}
+              disabled={page === 1 || isLoading}
             >prev
             </button>
             <button
               className="bg-indigo-500 hover:bg-indigo-600 py-4 px-8 rounded-lg overflow-hidden text-white disabled:bg-indigo-300"
               onClick={() => handlePage(page + 1)}
-              disabled={page >= pageCount}
+              disabled={page >= pageCount || isLoading}
             >next
             </button>
           </div>}
