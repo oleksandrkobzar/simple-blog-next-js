@@ -22,13 +22,13 @@ export default function Search(props: SearchProps) {
   }, [debouncedSearch]);
 
   useEffect(() => {
-    setSearch(props.search)
+    setSearch(props.search);
   }, [props.search]);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
+    setSearch(e.target.value);
     debouncedSearch(e.target.value);
-  }
+  };
 
   return (
     <input

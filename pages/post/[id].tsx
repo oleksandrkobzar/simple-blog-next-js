@@ -6,39 +6,39 @@ import Link from "next/link";
 
 import { getPostApi } from "../../shared/api";
 import { Post as PostInterface, Category } from "../../interfaces";
-import PlaceholderImage from '../../assets/images/placeholder.jpg'
+import PlaceholderImage from "../../assets/images/placeholder.jpg";
 
 interface PostProps {
   post: PostInterface;
 }
 
-export async function getServerSideProps({query}: any) {
-  const {id} = query;
+export async function getServerSideProps({ query }: any) {
+  const { id } = query;
 
-  const {post} = await getPostApi(id);
+  const { post } = await getPostApi(id);
 
-  return {props: {post}};
+  return { props: { post } };
 }
 
-export default function Post({post}: PostProps) {
+export default function Post({ post }: PostProps) {
   const [isImageError, setIsImageError] = useState(false);
 
   useEffect(() => {
     setIsImageError(false);
-  }, [post.imageUrl])
+  }, [post.imageUrl]);
 
   return (
     <div className="max-w-screen-xl mx-auto">
       <Head>
         <title>Post page</title>
-        <meta name="description" content="Post page"/>
-        <link rel="icon" href="/favicon.ico"/>
+        <meta name="description" content="Post page" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="px-8 mb-8">
         <div className="relative pb-[56.25%] mb-4">
           <Image
-            src={isImageError ? PlaceholderImage: post.imageUrl}
+            src={isImageError ? PlaceholderImage : post.imageUrl}
             alt={post.title}
             fill
             objectFit="cover"

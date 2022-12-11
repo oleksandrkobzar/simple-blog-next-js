@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import Head from "next/head";
 
 import { Category, Post } from "../interfaces";
@@ -17,13 +17,13 @@ interface BlogProps {
   search: string;
 }
 
-export async function getServerSideProps({query}: any) {
-  const {page, limit, search, category} = query;
+export async function getServerSideProps({ query }: any) {
+  const { page, limit, search, category } = query;
 
-  const {posts, pageCount} = await getPostsApi(page, limit, search, category);
-  const {categories} = await getCategoriesApi();
+  const { posts, pageCount } = await getPostsApi(page, limit, search, category);
+  const { categories } = await getCategoriesApi();
 
-  return {props: {posts, pageCount, categories, category: category || "", search: search || ""}};
+  return { props: { posts, pageCount, categories, category: category || "", search: search || "" } };
 }
 
 export default function Blog(props: BlogProps) {
@@ -31,7 +31,7 @@ export default function Blog(props: BlogProps) {
   const [search, setSearch] = useState(props.search);
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(props.pageCount);
-  const [selectedCategory, setSelectedCategory] = useState(props.category)
+  const [selectedCategory, setSelectedCategory] = useState(props.category);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function Blog(props: BlogProps) {
 
   const getPosts = async (page: number = 1, limit: number = DEFAULT_LIMIT_POSTS, search: string, category: string) => {
     setIsLoading(true);
-    const {posts, pageCount} = await getPostsApi(page, limit, search, category);
+    const { posts, pageCount } = await getPostsApi(page, limit, search, category);
 
     setPosts(posts);
     setPageCount(pageCount);
@@ -51,32 +51,32 @@ export default function Blog(props: BlogProps) {
   };
 
   const handleSelectCategory = async (idCategory: string) => {
-    setSelectedCategory(idCategory)
-    setSearch("")
-    setPage(1)
+    setSelectedCategory(idCategory);
+    setSearch("");
+    setPage(1);
 
     await getPosts(1, DEFAULT_LIMIT_POSTS, "", idCategory);
-  }
+  };
 
   const handleSearch = async (_searchText: string) => {
     setSearch(_searchText);
-    setPage(1)
+    setPage(1);
 
     await getPosts(1, DEFAULT_LIMIT_POSTS, _searchText, selectedCategory);
-  }
+  };
 
   const handlePage = async (_page: number) => {
-    setPage(_page)
+    setPage(_page);
 
     await getPosts(_page, DEFAULT_LIMIT_POSTS, search, selectedCategory);
-  }
+  };
 
   return (
     <div className="max-w-screen-xl mx-auto">
       <Head>
         <title>Blog page</title>
-        <meta name="description" content="Blog page"/>
-        <link rel="icon" href="/favicon.ico"/>
+        <meta name="description" content="Blog page" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
@@ -87,7 +87,7 @@ export default function Blog(props: BlogProps) {
             labore natus atque, ducimus sed.
           </p>
           <div className="flex justify-between flex-col sm:flex-row gap-4 my-4">
-            <Search search={search} setSearch={(v) => handleSearch(v)}/>
+            <Search search={search} setSearch={(v) => handleSearch(v)} />
             <select
               name="categories"
               value={selectedCategory}
@@ -105,7 +105,7 @@ export default function Blog(props: BlogProps) {
           {(posts && posts.length) ?
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {posts.map((post: Post, key) => (
-                <PostTile key={key} post={post}/>
+                <PostTile key={key} post={post} />
               ))}
             </div>
             : <div className="text-center">Posts not found</div>

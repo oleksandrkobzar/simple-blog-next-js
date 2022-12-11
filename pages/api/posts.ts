@@ -3,7 +3,7 @@ import { Category, Post } from "../../interfaces";
 import mockData from "../../json/blog.json";
 
 interface PostsApiResponse {
-  posts: Array<Post>
+  posts: Array<Post>;
   pageCount: number;
 }
 
@@ -11,7 +11,7 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<PostsApiResponse>
 ) {
-  const {page, limit, search, category} = req.query;
+  const { page, limit, search, category } = req.query;
 
   if (!page || !limit) {
     res.status(400);
@@ -36,17 +36,17 @@ export default function handler(
   const _posts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   _posts.forEach(element => {
-    const listOfCategories: Array<Category> = []
+    const listOfCategories: Array<Category> = [];
     element.categories.forEach(categoryId => {
-      listOfCategories.push(...categories.filter(category => category.id === categoryId))
-    })
+      listOfCategories.push(...categories.filter(category => category.id === categoryId));
+    });
 
     // @ts-ignore
     element.categoriesList = listOfCategories;
-  })
+  });
 
   res.status(200).json({
     posts: _posts,
-    pageCount: pageCount,
+    pageCount: pageCount
   });
 }

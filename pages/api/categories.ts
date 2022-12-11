@@ -12,6 +12,6 @@ export default function handler(
 ) {
 
   res.status(200).json({
-    categories: mockData.categories,
+    categories: mockData.categories
   });
 }
